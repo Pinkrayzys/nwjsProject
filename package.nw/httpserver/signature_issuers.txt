@@ -1,0 +1,43 @@
+.NET Foundation Projects Code Signing CA
+Certum Code Signing CA SHA2
+Certum Level III CA
+COMODO Code Signing CA 2
+COMODO RSA Extended Validation Code Signing CA
+DigiCert Assured ID Code Signing CA-1
+DigiCert EV Code Signing CA
+DigiCert EV Code Signing CA (SHA2)
+DigiCert SHA2 Assured ID Code Signing CA
+DigiCert Trusted G4 Code Signing RSA4096 SHA384 2021 CA1
+GlobalSign Extended Validation CodeSigning CA - SHA256 - G3
+iKGF_AZSKGFDCS
+Intel External Basic Issuing CA 3A
+Intel External Basic Issuing CA 3B
+Intel External Issuing CA 7B
+Microsoft Code Signing PCA
+Microsoft Code Signing PCA 2010
+Microsoft Code Signing PCA 2011
+Microsoft Marketplace CA 001
+Microsoft Marketplace CA 003
+Microsoft Marketplace Production CA 2011
+Microsoft Update Signing CA 2.1
+Microsoft Update Signing CA 2.3
+Microsoft Windows Hardware Compatibility PCA
+Microsoft Windows PCA 2010
+Microsoft Windows Phone Production PCA 2012
+Microsoft Windows Production PCA 2011
+Microsoft Windows Third Party Component CA 2012
+Microsoft Windows Third Party Component CA 2013
+Microsoft Windows Third Party Component CA 2014
+Microsoft Windows Verification PCA
+Sectigo RSA Code Signing CA
+StartCom Class 3 Object CA
+Symantec Class 3 Extended Validation Code Signing CA - G2
+Symantec Class 3 SHA256 Code Signing CA
+Thawte Code Signing CA
+Thawte Code Signing CA - G2
+thawte SHA256 Code Signing CA
+VeriSign Class 3 Code Signing 2004 CA
+VeriSign Class 3 Code Signing 2009-2 CA
+VeriSign Class 3 Code Signing 2010 CA
+WoSign Class 3 Code Signing CA G2
+WoTrus Code Signing CA

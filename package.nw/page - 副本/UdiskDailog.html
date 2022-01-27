@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="../asstes/js/vue.js"></script>
+  <link rel="stylesheet" type="text/css" href="../asstes/css/footer.css"/>
+  <link rel="stylesheet" type="text/css" href="../asstes/css/setUp.css"/>
+  <style >
+    .Main {
+      width: 100%;
+      height: 100%;
+      -webkit-user-select:none;
+      -webkit-app-region:drag;
+    }
+    p {
+      padding: 0;
+      margin: 0;
+    }
+    .UdiskDailog {
+      display: flex;
+      height: 100%;
+      width: 100%;
+      flex-direction: column;
+    }
+    .n_top {
+      padding: 50px 20px 20px;
+      box-sizing: border-box;
+      flex: 0 0 45%;
+      display: flex;
+      align-items: flex-end;
+      background: -webkit-linear-gradient(to bottom, #D0EBE6, #F3F7F7, #D0EBE6); /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(to bottom, #D0EBE6, #F3F7F7, #D0EBE6); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    }
+    .n_top img {
+      height: 50px;
+    }
+    .msg {
+      display: inline-flex;
+      align-items: flex-start;
+      flex-direction: column;
+      justify-content: center;
+      height: 50px;
+      margin-left: 10px;
+    }
+    .msg p {
+      padding: 0 5px;
+      color: #3D8977;
+    }
+    .msg p:first-of-type {
+      font-size: 15px;
+    }
+    .msg p:last-of-type {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .n_bottom {
+      flex:  0 0 55%;
+      padding: 10px 20px;
+      box-sizing: border-box;
+      position: relative;
+    }
+    .n_b_msg {
+      font-size: 12px;
+      color: #606266;
+    }
+    .riskProcess {
+      padding: 10px 0 ;
+    }
+    .r_p_msg {
+      color: #3D8977;
+      font-size: 14px;
+    }
+    .r_p_msg span {
+      color:#303133;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .btns {
+      position: absolute;
+      left: 20px;
+      bottom: 10px;
+      right: 20px;
+      text-align: right;
+    }
+    .el-button {
+      -webkit-app-region:no-drag !important;
+    }
+
+  </style>
+  <title>发现可疑进程</title>
+</head>
+<body ondragstart="return false">
+  <div id="Vue" class="Main">
+    <div class="head">
+      <h3 v-cloak>
+        <img src="../asstes/img/edr-logo.png">
+        <span v-cloak>智戎提醒您</span></h3>
+      <div>
+        <span @click="miniSizeWindow">
+          <i class="iconfont edr-2zuixiaohua-2"></i>
+        </span>
+        &nbsp;
+        <span @click="closeWindow">
+          <i class="iconfont edr-guanbi"></i>
+        </span>
+      </div>
+    </div>
+
+    <div class="UdiskDailog">
+
+      <div class="n_top">
+
+          <img src="../asstes/img/udisk.png">
+
+        <div class="msg">
+          <p>
+            检测到移动介质
+          </p>
+          <p>检测到U盘插入, 建议开启检测</p>
+        </div>
+      </div>
+
+      <div class="n_bottom">
+        <p class="n_b_msg">检测到移动介质，如果你不信任此介质，请使用智戎EDR检测功能进行检测。</p>
+        <div class="riskProcess">
+          <p class="r_p_msg"><span>移动介质：</span>{{udisk}}</p>
+        </div>
+        <div class="btns">
+          <el-button type="text" @click='handle(0)' style="-webkit-app-region:no-drag">忽略</el-button>
+          <el-button size="medium" type="warning" plain @click='handle(1)' style="-webkit-app-region:no-drag">立即检测</el-button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <link rel="stylesheet" href="../components/element-ui/index.css">
+  <script src="../components/element-ui/index.js"></script>
+  <link rel="stylesheet" href="../asstes/iconfont/font_2973535_bplp2fmsc38/iconfont.css">
+  <script src="../asstes/js/dayjs.min.js"></script>
+  <script src="../asstes/js/node-api-use.js"></script>
+  <script src="../asstes/js/utils.js"></script>
+  <script>
+    var Axios = require('axios')
+    var ajax = require('./asstes/js/axios/newAjax.js')
+    var app = new Vue({
+      el: "#Vue",
+      data: {
+        countDown: 15,
+        timer: '',
+        udisk: ''
+        // riskProcessId: ''
+      },
+      mounted () {
+        // // 定时器用于按钮倒计时
+        // let countDownTimer = setInterval(() => {
+        //   if (!this.countDown) {
+        //     clearInterval(countDownTimer)
+        //   } else {
+        //     this.countDown--
+        //   }
+        // }, 1000);
+
+        // // 定时器十五秒 提示窗口自动关闭
+        // this.timer = setTimeout(() => {
+        //   this.handle(0)
+        //   this.closeWindow()
+        // }, 15000)
+
+        // 获取url上的参数
+        let url = window.location.href.split('?')
+        // url = url[1].split('&')
+        this.udisk = url[1].split('=')[1]
+      },
+      methods: {
+        handle(val) {
+          // if (val) {
+          //   ajax.post('kill', {
+          //     pids: this.riskProcessId,
+          //   }).then(() => {
+          //     closeWindow()
+          //   })
+          //   .catch(err => {
+          //   })
+          // } else {
+          //   closeWindow()
+          // }
+        },
+        miniSizeWindow() {
+          miniSizeWindow()
+        },
+        closeWindow() {
+          var win = nw.Window.get();
+          // var win = nw.Window.get();
+          win.close(true);
+        }
+      }
+    })
+  </script>
+</body>
+</html>

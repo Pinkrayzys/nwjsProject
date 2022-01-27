@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智戎EDR</title>
+  <script src="../asstes/js/vue.js"></script>
+  <link rel="stylesheet" type="text/css" href="../asstes/css/footer.css"/>
+  <link rel="stylesheet" type="text/css" href="../asstes/css/setUp.css"/>
+</head>
+<body ondragstart="return false">
+  <div id="Vue" class="setUp">
+
+    <div class="head">
+      <h3 v-cloak>
+        <img src="../asstes/img/edr-logo.png">
+        <span v-cloak>{{systemName}}</span></h3>
+      <div>
+        <span @click="miniSizeWindow">
+          <i class="iconfont edr-2zuixiaohua-2"></i>
+        </span>
+        &nbsp;
+        <span @click="closeWindow">
+          <i class="iconfont edr-guanbi"></i>
+        </span>
+      </div>
+    </div>
+
+    <div  class="goBack"><i class="el-icon-arrow-left" @click="goBack">返回</i></div>
+
+    <div class="content"
+      :style="{
+          display: activeTab + 1 ? 'block' : 'none'
+        }"
+      >
+      <div
+        class="tabs"
+        >
+        <span
+        :style="{
+          color: activeTab === 0 ? '#3d8977': '#dcdfe6',
+          fontWeight: activeTab === 0 ? '600': ''
+        }"
+        @click="activeTab = 0"
+        ><i class="iconfont edr-shezhi1" style="font-weight: normal;"></i>基础设置</span>
+
+        <span
+        @click="activeTab = 2"
+        :style="{
+          color: activeTab === 2? '#3d8977': '#dcdfe6',
+          fontWeight: activeTab === 2 ? '600': ''
+        }"
+        ><i class="iconfont edr-geli" style="font-weight: normal;font-size: 30px;"></i>隔离名单</span>
+
+        <span
+        @click="activeTab = 1"
+        :style="{
+          color: activeTab === 1 ? '#3d8977': '#dcdfe6',
+          fontWeight: activeTab === 1 ? '600': ''
+        }"
+        ><i class="iconfont edr-baimingdan" style="font-weight: normal;"></i>信任名单</span>
+
+      </div>
+
+      <div class="basicSettings" v-if="!activeTab">
+        <h3 class="setUpTitle">关于终端</h3>
+        <ul>
+          <li>版本：v1.1.1</li>
+          <li>日期：20211116</li>
+          <li>信息：demo</li>
+        </ul>
+
+        <h3 class="setUpTitle">设置</h3>
+        <div class="AutoClean">
+          <span>查杀任务 - 自动清理：</span>
+          <el-switch
+            @change = 'changeSwitch'
+            style="display: block"
+            v-model="AutomaticCleaning"
+            active-value="1"
+            inactive-value="0"
+            active-color="#50B19A"
+            inactive-color="#D7E7E4"
+            active-text="打开"
+            inactive-text="关闭">
+        </div>
+
+        <h3 class="setUpTitle">升级</h3>
+        <p v-cloak>病毒库版本：{{edition}}
+          <el-button
+          size="medium"
+          :loading="loading"
+          style="background-color:#54B7A0;
+          border-color:#54B7A0;
+          color: #fff;
+          margin-left: 20px;
+          font-size: 12px;
+          -webkit-app-region:no-drag;"
+           @click="upgrade">检查更新</el-button>
+
+        <!-- <h3 class="setUpTitle">配置</h3>
+        <div>
+          语言：
+          <select v-model="language">
+            <option value ="china">中文</option>
+            <option value="English">English</option>
+          </select>
+        </div> -->
+
+      </div>
+
+      <div class="quarantine" v-if="activeTab > 0">
+        <el-table
+        :data="tableData"
+        height="400"
+        style="width: 100%">
+        <el-table-column
+        show-overflow-tooltip
+        :prop="activeTab === 1? 'value' : 'old_path'"
+        label="文件路径">
+      </el-table-column>
+        <el-table-column
+          label="操作"
+          width="200"
+          >
+          <template slot-scope="scope">
+            <el-button
+              type="text"
+              v-if="activeTab === 1"
+              @click="removeWhitelist(scope.row)">
+              <i class="iconfont edr-guanbi1" style="color:#50B19A;font-size: 12px;"></i>
+              </el-button>
+            <el-button
+              type="text"
+              @click="recovery(scope.row.old_path)"
+              v-else>
+              <i class="iconfont edr-shuaxin" style="color:#50B19A;"></i></el-button>
+            <!-- <span class="textBtn" @click="recovery(scope.row.old_path)" v-else>恢复</span> -->
+          </template>
+        </el-table-column>
+      </el-table>
+      </div>
+
+    </div>
+
+    <div class="footer">
+    </div>
+  </div>
+  <link rel="stylesheet" href="../components/element-ui/index.css">
+  <script src="../components/element-ui/index.js"></script>
+  <link rel="stylesheet" href="../asstes/iconfont/font_2973535_bplp2fmsc38/iconfont.css">
+  <script src="../asstes/js/dayjs.min.js"></script>
+  <script src="../components/footer.js"></script>
+  <script src="../components/tray/tray.js"></script>
+  <script src="../asstes/js/node-api-use.js"></script>
+  <script src="../asstes/js/utils.js"></script>
+  <script>
+    var ajax = require('./asstes/js/axios/newAjax.js')
+    new Vue ({
+    el: "#Vue",
+    data: {
+      edition: localStorage.VirusVs || 'virus-vision-1.0',
+      systemName: localStorage.systemName || '系统名',
+      AutomaticCleaning: false,
+      language:'china',
+      activeTab: 0,
+      loading: false,
+      whitelistData: [],
+      tableData: [],
+      tabData: [
+        {
+          title: '基础设置',
+          icon: 'edr-shezhi1',
+          fontSize: '26px'
+        },
+        {
+          title: '隔离名单',
+          icon: 'edr-geli',
+          fontSize: '30px'
+        },
+        {
+          title: '信任名单',
+          icon: 'edr-shezhi1',
+          fontSize: '26px'
+        }
+      ]
+    },
+    watch: {
+      activeTab (val) {
+        switch (val) {
+          case 1:
+            this.getwhitelist()
+            break;
+          case 2:
+            this.getIsolate()
+          break;
+          default:
+            break;
+        }
+      }
+      // AutomaticCleaning (val) {
+      //   localStorage.AutomaticCleaning = val
+      // }
+    },
+    mounted() {
+      request_switch_list()
+      this.AutomaticCleaning = localStorage.AutomaticCleaning
+      var url = location.search
+      this.activeTab = Number(url.split('=')[1]) || 0
+      var orignalSetItem = localStorage.setItem;
+      localStorage.setItem = function(key,newValue){
+        var setItemEvent = new Event("setItemEvent");
+        setItemEvent.key = key;
+        setItemEvent.newValue = newValue;
+        window.dispatchEvent(setItemEvent);
+        orignalSetItem.apply(this,arguments);
+      };
+      let th = this
+      window.addEventListener("setItemEvent", function (e) {
+        if(e.key === 'VirusVs'){
+          var _this=localStorage.getItem("VirusVs")
+          th.edition = _this
+        }
+        if(e.key === 'AutomaticCleaning'){
+          var _this = localStorage.getItem("AutomaticCleaning")
+          th.AutomaticCleaning = Boolean(_this)
+          console.log(th.AutomaticCleaning)
+        }
+      });
+    },
+    methods: {
+      changeSwitch (val) {
+        if (Number(val)) {
+          this.$confirm('打开自动清理后，将在检测完成后自动删除当次查杀中的恶意文件， 是否继续。', '提示', {
+            confirmButtonText: '确定'
+          })
+            .then(()=> {
+              localStorage.AutomaticCleaning = val
+            })
+            .catch(err => {
+             this.AutomaticCleaning = false
+            })
+
+        } else {
+          localStorage.AutomaticCleaning = val
+        }
+      },
+      // 获取隔离文件
+      getIsolate () {
+        ajax.post('isolate')
+          .then(res => {
+            this.tableData = res.data
+          })
+          .catch(err => {
+            console.log(err);
+          })
+      },
+
+      // 获取白名单
+      getwhitelist() {
+        ajax.post('whitelist')
+          .then(res => {
+            this.tableData = res.data
+          })
+          .catch(err => {
+            console.log(err);
+          })
+      },
+
+      // 返回上一页 -- 需要提出util
+      goBack() {
+        tray.remove()
+        if (sessionStorage.deleteThen) {
+          window.location.href = '/index.html'
+        } else {
+          window.history.go(-1)
+        }
+      },
+
+      removeWhitelist (val) {
+        ajax.post('whitelist', {
+          remove: true,
+          paths: val.value
+        })
+          .then(res => {
+            if(res.type !== 'warn') {
+              this.getwhitelist()
+            } else {
+              this.$message({
+                message: res.data,
+                type: 'warning'
+              });
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          })
+      },
+
+      // 恢复隔离文件
+      recovery(val) {
+        this.$confirm('恢复隔离文件可能会对系统产生影响， 是否继续。', '提示', {
+            confirmButtonText: '确定'
+          })
+            .then(()=> {
+              ajax.post('recovery', {
+                paths: val
+              })
+                .then(res => {
+                  if(res.type !== 'warn') {
+                    this.getIsolate()
+                  } else {
+                    this.$message({
+                      message: res.data,
+                      type: 'warning'
+                    });
+                  }
+                })
+                .catch(err => {
+                  console.log(err);
+                })
+            })
+            .catch(err => {
+            })
+      },
+
+      upgrade() {
+        this.$confirm('此操作将升级终端病毒库, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消'
+        }).then(() => {
+          this.loading = true
+          ajax.get('update_virus_lib/', {
+            terminal_id: getMAC().mac,
+            if_download: 1 ,  // 1  下载  0  不下载
+          })
+            .then(res => {
+              this.loading = false
+              if (res.status === 200) {
+                this.$message({
+                  message: res.message,
+                  type: 'success'
+                });
+                downUpdataFile('http://117.186.16.165:18010/' + res.data.virus_url, 'upgradeVirusFile.rp')
+                  localStorage.VirusVs = res.data.virus_version
+                } else {
+                  this.$message({
+                    message: res.message,
+                    type: 'warning'
+                  });
+                }
+            })
+            .catch(err => {
+              console.log(err);
+            })
+        })
+
+        // console.log('点击升级按钮')
+        // downUpdataFile('https://at.alicdn.com/t/font_1756178_zwjwwqx0pf.woff2?t=1620637603229', 'upgradeFile')
+      },
+
+      // 最小化弹窗事件
+      miniSizeWindow() {
+        miniSizeWindow()
+      },
+      closeWindow() {
+        closeWindow()
+      }
+    }
+  })
+  </script>
+</body>
+</html>

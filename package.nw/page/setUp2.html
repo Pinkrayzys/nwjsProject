@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智戎EDR</title>
+  <script src="../asstes/js/vue.js"></script>
+  <link rel="stylesheet" type="text/css" href="../asstes/css/footer.css"/>
+  <link rel="stylesheet" type="text/css" href="../asstes/css/setUp2.css"/>
+</head>
+<body ondragstart="return false">
+  <div id="Vue" class="setUp">
+
+    <div  class="goBack"><i class="el-icon-arrow-left" @click="goBack">返回</i></div>
+
+    <div class="tab">
+      <ul>
+        <li
+          v-cloak
+          v-for="(i, j) of tabData"
+          :key="j"
+          :style="{
+            color: activeTab === j ? '#3D8977': '#ddd'
+          }"
+          @click="changeTab(j)">
+          <i class="iconfont" :class="i.icon"></i>
+          {{i.title}}
+        </li>
+      </ul>
+    </div>
+    <div class="content">
+      <div class="basicSettings" v-if="activeTab === 0">
+        <h3 class="setUpTitle">关于终端</h3>
+        <ul>
+          <li>版本：v1.1.1</li>
+          <li>日期：20211116</li>
+          <li>信息：demo</li>
+        </ul>
+
+        <h3 class="setUpTitle">设置</h3>
+        <div class="AutoClean">
+          <span>查杀任务 - 自动清理：</span>
+          <el-switch
+            @change = 'changeSwitch'
+            style="display: block"
+            v-model="AutomaticCleaning"
+            active-value="1"
+            inactive-value="0"
+            active-color="#50B19A"
+            inactive-color="#D7E7E4"
+            active-text="打开"
+            inactive-text="关闭">
+        </div>
+
+        <h3 class="setUpTitle">升级</h3>
+        <p v-cloak>病毒库版本：{{edition}}
+          <el-button
+          size="medium"
+          :loading="loading"
+          style="background-color:#54B7A0;
+          border-color:#54B7A0;
+          color: #fff;
+          margin-left: 20px;
+          font-size: 12px;
+          -webkit-app-region:no-drag;"
+           @click="upgrade">检查更新</el-button>
+
+        <!-- <h3 class="setUpTitle">配置</h3>
+        <div>
+          语言：
+          <select v-model="language">
+            <option value ="china">中文</option>
+            <option value="English">English</option>
+          </select>
+        </div> -->
+
+      </div>
+
+      <div class="quarantine" v-if="activeTab === 1 || activeTab === 2">
+        <el-table
+        :data="tableData"
+        height="450"
+        style="width: 100%">
+        <el-table-column
+        show-overflow-tooltip
+        :prop="activeTab === 1? 'value' : 'old_path'"
+        label="文件路径">
+      </el-table-column>
+        <el-table-column
+          label="操作"
+          width="200"
+          >
+          <template slot-scope="scope">
+            <el-button
+              type="text"
+              v-if="activeTab === 1"
+              @click="removeWhitelist(scope.row)">
+              <i class="iconfont edr-guanbi1" style="color:#50B19A;font-size: 12px;"></i>
+              </el-button>
+              <el-button
+                type="text"
+                @click="recovery(scope.row.old_path)"
+                v-else>
+                <i class="iconfont edr-shuaxin" style="color:#50B19A;"></i></el-button>
+              <el-button
+                type="text"
+                @click="fileDialogVisible = true;selectIsolatePath = scope.row.old_path"
+                v-if="activeTab === 2">
+                提取</el-button>
+              <el-button
+                type="text"
+                @click="removeIsolate(scope.row.new_path)"
+                v-if="activeTab === 2">
+                删除</el-button>
+
+
+          </template>
+        </el-table-column>
+      </el-table>
+      </div>
+
+      <div class="logData" v-if="activeTab === 3">
+        <el-table
+          :data="logData"
+          height="450"
+          style="width: 100%">
+        <el-table-column
+          prop="time"
+          label="时间">
+        </el-table-column>
+        <el-table-column
+          prop="mode"
+          label="分类">
+        </el-table-column>
+        <el-table-column
+          prop="method"
+          label="记录">
+        </el-table-column>
+        <el-table-column
+          label="操作"
+          width="200"
+          >
+          <template slot-scope="scope">
+            <span
+              style="color:#50B19A;cursor: pointer;"
+              @click="getlogData('detail', 1 , scope.row.logfile);selectLog = scope.row.logfile" >详情</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div>
+        <el-pagination
+          small
+          :current-page="page"
+          @current-change="pageChange"
+          layout="prev, pager, next"
+          :page-count="pageCount">
+        </el-pagination>
+      </div>
+      </div>
+
+      <el-dialog
+        title="日志详情"
+        width="500px"
+        :modal="false"
+        :visible.sync="dialogVisible"
+        width="30%">
+        <template slot="title">
+          <div class="dialogVisibleTitle">
+            <img src="../asstes/img/edr-logo.png">
+            <span>
+              日志详情
+            </span>
+          </div>
+        </template>
+
+        <div v-html="logInfo"></div>
+
+        <span slot="footer" class="dialog-footer">
+          <el-button
+            @click="downloadBlob(selectLog)"
+            size="small"
+            class="btnColor">导出</el-button>
+        </span>
+      </el-dialog>
+
+
+      <el-dialog
+        :visible.sync="fileDialogVisible"
+        width="500px"
+        :modal="false"
+        class="dialogVisibleStyle"
+        >
+        <template slot="title">
+          <div class="dialogVisibleTitle">
+            <img src="../asstes/img/edr-logo.png">
+            <span>
+              选择检测目录
+            </span>
+          </div>
+        </template>
+        <div class="Mycomputer"
+          :style="{
+            display: dialogVisible ? 'flex' : 'none'
+          }"
+        >
+          <img src="../asstes/img/Mycomputer.png" class="imgSize">
+          <!-- <i class="el-icon-s-platform" style="color: blue;"></i> -->
+          此电脑
+        </div>
+
+        <el-tree
+          ref="file-tree"
+          :props="defaultProps"
+          :load="loadNode"
+          icon-class="-"
+          lazy
+          show-checkbox
+          @check-change="handleCheckChange">
+          <template slot-scope="{node, data}">
+            <div class="imgBox imgSize">
+              <img
+                class="imgSize"
+                v-show="data.isDir"
+                :style="{
+                  width: node.expanded ? '20px': '18px'
+                }"
+                :src="data.disk?
+                  '../asstes/img/disk.png' :
+                  node.expanded ?
+                  '../asstes/img/folder-opened.png' : '../asstes/img/folder.png'">
+              <span>{{data.name}}</span>
+            </div>
+          </template>
+        </el-tree>
+
+        <span slot="footer" class="dialog-footer" v-cloak>
+          <el-button
+            :disabled="!taskPathArr.length"
+            :type="taskPathArr.length ? 'primary' : ''"
+            @click="extract"
+            size='small'>确 定</el-button>
+
+          <el-button @click="fileDialogVisible = false" size='small'>取 消</el-button>
+        </span>
+      </el-dialog>
+    </div>
+  </div>
+
+  </div>
+  <link rel="stylesheet" href="../components/element-ui/index.css">
+  <script src="../components/element-ui/index.js"></script>
+  <link rel="stylesheet" href="../asstes/iconfont/iconfont/iconfont.css">
+  <script src="../asstes/js/dayjs.min.js"></script>
+  <script src="../asstes/js/node-api-use.js"></script>
+  <script src="../asstes/js/utils.js"></script>
+  <script>
+    var ajax = require('./asstes/js/axios/newAjax.js')
+    new Vue ({
+    el: "#Vue",
+    data: {
+      edition: localStorage.VirusVs || 'virus-vision-1.0',
+      systemName: localStorage.systemName || '系统名',
+      dialogVisible: false,
+      fileDialogVisible:false,
+      AutomaticCleaning: false,
+      language:'china',
+      activeTab: 0,
+      logInfo: '',
+      selectLog: '',
+      page: 1,
+      pageCount: 0,
+      loading: false,
+      logData: [],
+      tableData: [],
+      taskPathArr: [],
+      defaultProps: {
+        label: 'name',
+        children: 'files'
+      },
+      selectIsolatePath:'',
+      tabData: [
+        {
+          title: '基础设置',
+          icon: 'edr-shezhi1',
+          fontSize: '26px'
+        },
+        {
+          title: '信任名单',
+          icon: 'edr-xinrenqu',
+          fontSize: '26px'
+        },
+        {
+          title: '隔离名单',
+          icon: 'edr-geliqu',
+          fontSize: '30px'
+        },
+        {
+          title: '安全日志',
+          icon: 'edr-rizhi',
+          fontSize: '26px'
+        }
+      ]
+    },
+    watch: {
+      activeTab (val) {
+        switch (val) {
+          case 1:
+            this.getwhitelist()
+            break;
+          case 2:
+            this.getIsolate()
+          break;
+          case 3:
+            this.getlogData('list', 1)
+          break;
+          default:
+            break;
+        }
+      }
+      // AutomaticCleaning (val) {
+      //   localStorage.AutomaticCleaning = val
+      // }
+    },
+    mounted() {
+      request_switch_list()
+      this.AutomaticCleaning = localStorage.AutomaticCleaning
+      var url = location.search
+      this.activeTab = Number(url.split('=')[1]) || 0
+      var orignalSetItem = localStorage.setItem;
+      localStorage.setItem = function(key,newValue){
+        var setItemEvent = new Event("setItemEvent");
+        setItemEvent.key = key;
+        setItemEvent.newValue = newValue;
+        window.dispatchEvent(setItemEvent);
+        orignalSetItem.apply(this,arguments);
+      };
+      let th = this
+      window.addEventListener("setItemEvent", function (e) {
+        if(e.key === 'VirusVs'){
+          var _this=localStorage.getItem("VirusVs")
+          th.edition = _this
+        }
+        if(e.key === 'AutomaticCleaning'){
+          var _this = localStorage.getItem("AutomaticCleaning")
+          th.AutomaticCleaning = Boolean(_this)
+        }
+      });
+    },
+    methods: {
+      handleCheckChange () {
+        this.taskPathArr = this.$refs['file-tree'].getCheckedNodes().map(i => i.fullPath)
+      },
+      loadNode(node, resolve) {
+        if (node.level === 0) {
+          showLetter(r => {
+            console.log(r);
+            resolve(r)
+          })
+        } else {
+          resolve(fileTree(node.data.fullPath))
+          node.expanded = true
+        }
+      },
+      downloadBlob (url) {
+        let link = document.createElement('a')
+        // link.style.display = 'none'
+        link.href = cwdPath + '/httpserver/log/' + url
+        link.download = url
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        window.URL.revokeObjectURL(url) // 释放
+      },
+
+      pageChange(val) {
+        this.page = val
+        this.getlogData('list')
+
+      },
+      changeTab(val) {
+        this.activeTab = val
+      },
+
+      changeSwitch (val) {
+        if (Number(val)) {
+          this.$confirm('打开自动清理后，将在检测完成后自动删除当次查杀中的恶意文件， 是否继续。', '提示', {
+            confirmButtonText: '确定',
+            modal: false
+          })
+            .then(()=> {
+              localStorage.AutomaticCleaning = val
+            })
+            .catch(err => {
+             this.AutomaticCleaning = false
+            })
+
+        } else {
+          localStorage.AutomaticCleaning = val
+        }
+      },
+      // 获取隔离文件
+      getIsolate () {
+        ajax.post('isolate')
+          .then(res => {
+            this.tableData = res.data
+          })
+          .catch(err => {
+            console.log(err);
+          })
+      },
+
+      // 获取白名单
+      getwhitelist() {
+        ajax.post('whitelist')
+          .then(res => {
+            this.tableData = res.data
+          })
+          .catch(err => {
+            console.log(err);
+          })
+      },
+
+      // 获取日志列表
+      getlogData(operation, page, logfile, exportpath ) {
+        ajax.post('log', {
+          operation: operation,
+          page: this.page,
+          logfile: logfile || '',
+          exportpath: exportpath || ''
+        })
+          .then(res => {
+            if (operation === 'list') {
+              this.logData = res.log_list
+              this.pageCount = res.total_page
+            } else if (operation === 'detail'){
+              let str = res.data
+              this.logInfo = str.replace(/\\n/g,"<br>")
+              this.dialogVisible = true
+            } else {
+              downloadBlob()
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          })
+      },
+
+      // 返回上一页 -- 需要提出util
+      goBack() {
+        if (sessionStorage.deleteThen) {
+          window.location.href = '/index.html'
+        } else {
+          window.history.go(-1)
+        }
+      },
+
+      removeWhitelist (val) {
+        ajax.post('whitelist', {
+          remove: true,
+          paths: val.value
+        })
+          .then(res => {
+            if(res.type !== 'warn') {
+              this.getwhitelist()
+            } else {
+              this.$message({
+                message: res.data,
+                type: 'warning'
+              });
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          })
+      },
+
+      // 恢复隔离文件
+      recovery(val) {
+        this.$confirm('恢复隔离文件可能会对系统产生影响， 是否继续。', '提示', {
+            confirmButtonText: '确定',
+            modal: false
+          })
+            .then(()=> {
+              ajax.post('recovery', {
+                paths: val
+              })
+                .then(res => {
+                  if(res.type !== 'warn') {
+                    this.getIsolate()
+                  } else {
+                    this.$message({
+                      message: res.data,
+                      type: 'warning'
+                    });
+                  }
+                })
+                .catch(err => {
+                  console.log(err);
+                })
+            })
+            .catch(err => {
+            })
+      },
+      // 提取隔离文件
+      extract() {
+        // 提取
+        ajax.post('recovery', {
+          paths: this.selectIsolatePath,
+          target: this.taskPathArr
+        })
+          .then(res => {
+            this.selectIsolatePath = ''
+            this.getIsolate()
+            this.fileDialogVisible = false
+            this.$message({
+              message: res[0].flag,
+              type: 'succsess'
+            });
+          })
+          .catch(err => {
+            this.$message({
+              message: res[0].flag,
+              type: 'succsess'
+            });
+          })
+      },
+
+      removeIsolate(val) {
+        this.$confirm('此操作会将文件从系统中删除，可能会对系统产生影响， 是否继续。', '提示', {
+          confirmButtonText: '确定',
+          modal: false
+        })
+          .then(() => {
+            ajax.post('delete',{
+              paths: val
+            }).then((res) => {
+              this.getIsolate()
+              this.$message({
+                message: res[0].flag,
+                type: 'succsess'
+              });
+            })
+          })
+          .catch(() => {
+
+          })
+      },
+
+
+      upgrade() {
+        this.$confirm('此操作将升级终端病毒库, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          modal: false
+        }).then(() => {
+          this.loading = true
+          ajax.get('update_virus_lib/', {
+            terminal_id: getMAC().mac,
+            if_download: 1 ,  // 1  下载  0  不下载
+          })
+            .then(res => {
+              this.loading = false
+              if (res.status === 200) {
+                this.$message({
+                  message: res.message,
+                  type: 'success'
+                });
+                downUpdataFile('http://117.186.16.165:18010/' + res.data.virus_url, 'upgradeVirusFile.rp')
+                  localStorage.VirusVs = res.data.virus_version
+                } else {
+                  this.$message({
+                    message: res.message,
+                    type: 'warning'
+                  });
+                }
+            })
+            .catch(err => {
+              console.log(err);
+            })
+        })
+
+        // console.log('点击升级按钮')
+        // downUpdataFile('https://at.alicdn.com/t/font_1756178_zwjwwqx0pf.woff2?t=1620637603229', 'upgradeFile')
+      },
+
+    }
+  })
+  </script>
+</body>
+</html>

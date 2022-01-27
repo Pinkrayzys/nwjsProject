@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智戎EDR</title>
+  <link rel="stylesheet" type="text/css" href="./asstes/css/main.css" />
+  <link rel="stylesheet" type="text/css" href="./asstes/css/footer.css" />
+</head>
+
+</head>
+
+<body ondragstart="return false">
+  <div id="Vue" class="Main">
+
+    <div class="scan">
+      <div class="scanBanner">
+
+        <div
+          class="ProtectionDays"
+          :style="{
+            display: protectionDays + 1 ? 'block' : 'none'
+          }"
+         >
+          已经防护
+          <span >{{protectionDays || 0}}</span> 天
+        </div>
+
+        <div class="shield">
+          <img src="/asstes/img/shield.png">
+        </div>
+
+        <div class="systemInfo">
+          <div style="  justify-content: flex-end;">
+            <span>
+              <a href="./page/SetUp2.html?activeTab=2" target="_self">
+                <i class="iconfont edr-geliqu"></i><span>隔离区</span>
+                </a>
+            </span>
+            <span>
+              <a href="./page/SetUp2.html?activeTab=1" target="_self">
+              <i class="iconfont edr-xinrenqu"></i><span>信任区</span>
+              </a>
+            </span>
+          </div>
+          <div>
+            <span><i class="iconfont edr-upgrade"></i>版本：v1.1.1</span>
+            <span><i class="iconfont edr-duixiangfangbingdu"></i>病毒库版本: {{edition}}</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="scanBox">
+        <img src="./asstes/img/systemInfoBg.png" class="scanBoxBg">
+        <!-- <i class="sacning" v-if="currentScanType" v-cloak></i> -->
+        <div
+          :style="{
+            display: !currentScanType? 'block' : 'none'
+          }"
+          v-for="(i, j) of scanType"
+          :key="j"
+          v-cloak
+          v-if="!currentScanType"
+          @click="selectScan(j)"
+          class="scanItem">
+          <img :src="i.imgPath">
+          <p>{{i.title}}</p>
+        </div>
+        <div
+          :style="{
+            display: currentScanType? 'block' : 'none'
+          }"
+          @click="startScan"
+          class="scanItem">
+          <img src="asstes/img/currentScan.gif">
+          <p>正在{{scanTypeName[currentScanType]}}检测</p>
+        </div>
+
+      </div>
+
+      <el-dialog
+        :visible.sync="dialogVisible"
+        width="400px"
+        :modal="false"
+        class="dialogVisibleStyle"
+        >
+        <template slot="title">
+          <div class="dialogVisibleTitle">
+            <img src="./asstes/img/edr-logo.png">
+            <span>
+              选择检测目录
+            </span>
+          </div>
+        </template>
+        <div class="Mycomputer"
+          :style="{
+            display: dialogVisible ? 'flex' : 'none'
+          }"
+        >
+          <img src="./asstes/img/Mycomputer.png" class="imgSize">
+          <!-- <i class="el-icon-s-platform" style="color: blue;"></i> -->
+          此电脑
+        </div>
+
+        <el-tree
+          ref="file-tree"
+          :props="defaultProps"
+          :load="loadNode"
+          icon-class="-"
+          lazy
+          show-checkbox
+          @check-change="handleCheckChange">
+          <template slot-scope="{node, data}">
+            <div class="imgBox imgSize">
+              <img
+                class="imgSize"
+                v-show="data.isDir"
+                :style="{
+                  width: node.expanded ? '20px': '18px'
+                }"
+                :src="data.disk?
+                  './asstes/img/disk.png' :
+                  node.expanded ?
+                  './asstes/img/folder-opened.png' : './asstes/img/folder.png'">
+              <!-- <i
+                v-show="data.isDir"
+                :class="node.expanded ? 'el-icon-folder-opened' : 'el-icon-folder'"></i> -->
+
+              <span>{{data.name}}</span>
+            </div>
+          </template>
+        </el-tree>
+
+        <span slot="footer" class="dialog-footer" v-cloak>
+          <el-button
+            :disabled="!taskPathArr.length"
+            :type="taskPathArr.length ? 'primary' : ''"
+            @click="appointTask"
+            size='small'>确 定</el-button>
+
+          <el-button @click="dialogVisible = false" size='small'>取 消</el-button>
+        </span>
+      </el-dialog>
+    </div>
+  </div>
+  <script src="./asstes/js/node-api-use.js"></script>
+  <script src="./asstes/js/vue.js"></script>
+  <script src="./asstes/js/axios/index.js"></script>
+  <script src="./asstes/js/dayjs.min.js"></script>
+  <!-- <script src="./components/header.js"></script> -->
+  <!-- <script src="./components/footer.js"></script> -->
+  <link rel="stylesheet" href="./asstes/iconfont/iconfont/iconfont.css">
+  <link rel="stylesheet" href="./components/element-ui/index.css">
+  <script src="./components/element-ui/index.js"></script>
+  <script src="./asstes/js/utils.js"></script>
+  <script src="./asstes/js/chrome-api-use.js"></script>
+  <!-- <script src="../package.nw/node_modules/layui/dist/layui.js"></script> -->
+
+  <script>
+    var ajax = require('./asstes/js/axios/newAjax.js')
+
+    function openSetUp() {
+      window.location.href = './page/SetUp2.html'
+    }
+
+    const hh = {
+      template: '<header>安徽肯定会卡刷点卡</header>'
+    }
+
+    var app = new Vue({
+      el: "#Vue",
+      data: {
+        // systemName: localStorage.systemName || '系统名',
+        edition: localStorage.VirusVs || 'virus-vision-1.0',
+        currentScanType: sessionStorage.currentScanType || false,
+        t: 0,
+        protectionDays: '',
+        ipMsg: getMAC().ip,
+        dialogVisible: false,
+        defaultProps: {
+          label: 'name',
+          children: 'files'
+        },
+        scaning: '',
+        taskPathArr: [],
+        scanTypeName: {
+          full: '全盘',
+          paths: '指定',
+          fast: '快速'
+        },
+        scanType: [
+          {
+            title: '全盘检测',
+            mode: 'full',
+            imgPath: './asstes/img/scanfull.png',
+            show: true
+          },
+          {
+            title: '快速检测',
+            mode: 'fast',
+            imgPath: './asstes/img/scanfast.png',
+            show: true
+          },
+          {
+            title: '指定检测',
+            mode: 'paths',
+            imgPath: './asstes/img/scanAppoint.png',
+            show: true
+          },
+        ]
+      },
+      watch: {
+        // 'sessionStorage.scaning'(val) {
+        //   console.log(this.scaning)
+        //   this.scaning = val
+        // }
+      },
+      components: {
+      },
+
+      mounted() {
+        // openExe()
+
+        localStorage.startDay = localStorage.startDay ? localStorage.startDay : new Date()
+        localStorage.systemName = '智戎 Endpoint Detection Response v.202112'
+        let nowTime = new Date()
+        this.protectionDays = localStorage.protectionDays  || dayjs(nowTime).diff(localStorage.startDay, 'days')
+        localStorage.AutomaticCleaning = localStorage.AutomaticCleaning ? localStorage.AutomaticCleaning : 0
+
+
+        // 监听localStorage.protectionDays 的变化 以防一直在首页不刷新不操作 保护天数不更新
+        var orignalSetItem = localStorage.setItem;
+        localStorage.setItem = function(key,newValue){
+          var setItemEvent = new Event("setItemEvent");
+          setItemEvent.key = key;
+          setItemEvent.newValue = newValue;
+          window.dispatchEvent(setItemEvent);
+          orignalSetItem.apply(this,arguments);
+        };
+        let th = this
+        window.addEventListener("setItemEvent", function (e) {
+          if(e.key === 'protectionDays'){
+            var _this=localStorage.getItem("protectionDays")
+            th.protectionDays = _this
+          }
+          if(e.key === 'VirusVs'){
+            var _this=localStorage.getItem("VirusVs")
+            th.edition = _this
+          }
+        });
+
+
+        this.scaning = sessionStorage.scaning
+        // 如果 当前查杀存在 则判断展示当前的scanitem
+        this.currentScanType = sessionStorage.currentScanType
+        if (sessionStorage.currentScanType) {
+          this.scanType.forEach(item => {
+            if (item.mode !== sessionStorage.currentScanType) {
+              item.show = false
+            }
+          });
+
+          // 获取当前进度
+          if (!Boolean(Number(sessionStorage.pause))) {
+            this.getProgressIndex()
+          }
+        }
+
+        sessionStorage.deleteThen = ""
+        if (localStorage.uploadFile) {
+          // console.log(localStorage.uploadFile)
+          SendMalicious(JSON.parse(localStorage.uploadFile))
+        }
+
+
+        // this.getSystemWL()
+        riskProcess()
+        // this.createTerminal()
+        // changeStatus(1)
+        request_switch_list()
+
+        // this.getVirusVs()
+      },
+      methods: {
+        // 循环获取当前进度 和 result 判断
+        getProgressIndex() {
+          getProgress().then((progress) => {
+            if (progress.data === '扫描结束') {
+              getResult().then(result => {
+                sessionStorage.currentScanType = ''
+                this.currentScanType = ''
+                this.scanType.forEach(item => {
+                  item.show = true
+                });
+                let tabObj = {}
+                let d = result.data
+                d.forEach(item => {
+                  tabObj[item.type] ? tabObj[item.type] += 1 : tabObj[item.type] = 1
+                });
+                transmissionResult(result, tabObj)
+                SendMalicious(JSON.parse(JSON.stringify(d)))
+              })
+            } else {
+              setTimeout(() => {
+                this.getProgressIndex()
+              }, 200)
+            }
+          })
+        },
+
+        // 给后端传值新建管理终端
+        createTerminal () {
+          ajax.post('download_app/', {
+            terminal_id: getMAC().mac,
+            ip_address: getMAC().ip
+          })
+        },
+
+        handleCheckChange () {
+          this.taskPathArr = this.$refs['file-tree'].getCheckedNodes().map(i => i.fullPath)
+        },
+
+        appointTask () {
+          this.dialogVisible = false
+          const taskPathArr = this.taskPathArr // this.$refs['file-tree'].getCheckedNodes().map(i => i.fullPath)
+
+          // 是有选择了 文件才会开始扫描 不然只是关闭 弹窗而已
+          if (taskPathArr.length) {
+              if (sessionStorage.scaning === '1') {
+                stopScan()
+              }
+              ajax.post('scan', {
+                paths: taskPathArr.join(),
+                mode: 'paths'
+              })
+                .then(res => {
+                  sessionStorage.currentScanType = 'paths'
+                  window.location.href = '../page/ScanProgress.html' + '?mode=paths'
+                })
+                .catch(err => {
+                  this.$confirm('客户端服务启动失败，请重启客户端', '提示', {
+                    confirmButtonText: '确定',
+                    modal: false
+                  })
+                    .then(()=> {
+                    })
+                })
+          }
+        },
+
+        loadNode(node, resolve) {
+          if (node.level === 0) {
+            showLetter(r => {
+              console.log(r);
+              resolve(r)
+            })
+          } else {
+            resolve(fileTree(node.data.fullPath))
+            node.expanded = true
+          }
+        },
+
+        selectScan(val) {
+          if (dayjs('2022-12-25 01:01:01').diff(dayjs(new Date()),'seconds') <= 0 ) {
+            confirm(this, 1)
+          } else {
+            switch (val) {
+              case 0:
+                // stopScan 从外面移动到里面是因为 打开自定义弹窗的时候 如果没选择就关掉了 会不进行查杀没有任务提交
+                  if (sessionStorage.scaning === '1') {
+                    stopScan()
+                  }
+                  console.log('888')
+                  ajax.post('scan', { mode: 'full' })
+                  .then(res => {
+                    console.log(9999)
+                    console.log(res)
+                    sessionStorage.currentScanType = 'full'
+                    window.location.href = '../page/ScanProgress.html' + '?mode=full'
+                  })
+                  .catch(err => {
+                    console.log(999)
+                    confirm(this, 0)
+                  })
+                  console.log(999)
+                break;
+
+              case 1:
+                if (sessionStorage.scaning === '1') {
+                  stopScan()
+                }
+                ajax.post('scan', { mode: 'fast' })
+                  .then(res => {
+                    console.log(res)
+                    sessionStorage.currentScanType = 'fast'
+                    window.location.href = '../page/ScanProgress.html' + '?mode=fast'
+                  })
+                  .catch(err => {
+                    confirm(this, 0)
+                  })
+                break;
+
+              case 2:
+                this.dialogVisible = true
+                break;
+
+              default:
+                break;
+            }
+          }
+        },
+
+        getSystemWL() {
+          ajax.get('scan_white_list_info/', {
+            id: 1,
+          })
+            .then(res => {
+              downUpdataFile('http://117.186.16.165:18010/' + res.data.while_file_url, 'whitelist.txt')
+            })
+            .catch(err => {
+              console.log(err);
+            })
+        },
+
+        // 获取当前病毒库版本
+        getVirusVs() {
+          ajax.get('update_virus_lib/', {
+            terminal_id: getMAC().mac,
+            if_download: 1 ,  // 1  下载  0  不下载
+          })
+            .then(res => {
+              localStorage.setItem('VirusVs', res.data.virus_version)
+              // if (res.status === 200) {
+                // localStorage.VirusVs = res.data.virus_version
+                downUpdataFile('http://117.186.16.165:18010/' + res.data.virus_url, 'upgradeVirusFile.rp')
+              // }
+            })
+            .catch(err => {
+
+            })
+        },
+        startScan() {
+          window.location.href = './page/ScanProgress.html'
+        },
+        openSetUp() {
+          window.location.href = './page/SetUp.html'
+        },
+      }
+    })
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,150 @@
+[
+  {
+    "onExited": {},
+    "onUnresponsive": {},
+    "onCreated": {},
+    "onUpdatedWithMemory": {},
+    "onUpdated": {},
+    "ProcessType": {
+      "BROWSER": "browser",
+      "EXTENSION": "extension",
+      "GPU": "gpu",
+      "NACL": "nacl",
+      "NOTIFICATION": "notification",
+      "OTHER": "other",
+      "PLUGIN": "plugin",
+      "RENDERER": "renderer",
+      "SERVICE_WORKER": "service_worker",
+      "UTILITY": "utility",
+      "WORKER": "worker"
+    }
+  },
+  {
+    "ProcessInfo": {
+      "0": {
+        "id": 0,
+        "naclDebugPort": -1,
+        "osProcessId": 9635,
+        "privateMemory": 26136576,
+        "profile": "",
+        "tabs": [],
+        "title": "Browser",
+        "type": "browser"
+      },
+      "2": {
+        "id": 2,
+        "naclDebugPort": -1,
+        "osProcessId": 9641,
+        "privateMemory": 7860224,
+        "profile": "",
+        "tabs": [],
+        "title": "GPU Process",
+        "type": "gpu"
+      },
+      "3": {
+        "id": 3,
+        "naclDebugPort": -1,
+        "osProcessId": 9643,
+        "privateMemory": 27533312,
+        "profile": "用户1",
+        "tabs": [
+          2
+        ],
+        "title": "Background Page: nwjs-v0.58.0-osx-x64",
+        "type": "extension"
+      }
+    }
+  },
+  {
+    "onUpdatedWithMemory": {
+      "0": {
+        "cpu": 0,
+        "id": 0,
+        "jsMemoryAllocated": 0,
+        "jsMemoryUsed": 0,
+        "naclDebugPort": -1,
+        "network": 0,
+        "osProcessId": 9372,
+        "privateMemory": 25706496,
+        "profile": "",
+        "sqliteMemory": 121648,
+        "tabs": [],
+        "title": "Browser",
+        "type": "browser"
+      },
+      "3": {
+        "cpu": 0,
+        "cssCache": {
+          "liveSize": 0,
+          "size": 0
+        },
+        "id": 3,
+        "imageCache": {
+          "liveSize": 0,
+          "size": 0
+        },
+        "jsMemoryAllocated": 0,
+        "jsMemoryUsed": 0,
+        "naclDebugPort": -1,
+        "network": 0,
+        "osProcessId": 9379,
+        "privateMemory": 26664960,
+        "profile": "用户1",
+        "scriptCache": {
+          "liveSize": 0,
+          "size": 0
+        },
+        "tabs": [
+          2
+        ],
+        "title": "App: nwjs-v0.58.0-osx-x64",
+        "type": "extension"
+      }
+    }
+  },
+  {
+    "onUpdated": {
+      "0": {
+        "cpu": 0,
+        "id": 0,
+        "jsMemoryAllocated": 0,
+        "jsMemoryUsed": 0,
+        "naclDebugPort": -1,
+        "network": 0,
+        "osProcessId": 9412,
+        "profile": "",
+        "sqliteMemory": 121648,
+        "tabs": [],
+        "title": "Browser",
+        "type": "browser"
+      },
+      "3": {
+        "cpu": 0,
+        "cssCache": {
+          "liveSize": 0,
+          "size": 0
+        },
+        "id": 3,
+        "imageCache": {
+          "liveSize": 0,
+          "size": 0
+        },
+        "jsMemoryAllocated": 0,
+        "jsMemoryUsed": 0,
+        "naclDebugPort": -1,
+        "network": 0,
+        "osProcessId": 9425,
+        "profile": "用户1",
+        "scriptCache": {
+          "liveSize": 0,
+          "size": 0
+        },
+        "tabs": [
+          2
+        ],
+        "title": "App: nwjs-v0.58.0-osx-x64",
+        "type": "extension"
+      }
+    }
+  }
+]

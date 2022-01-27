@@ -1,0 +1,73 @@
+.NET Foundation
+Adobe Systems Incorporated
+ALIBABA (CHINA) NETWORK TECHNOLOGY CO.,LTD.
+Alipay.com Co.,Ltd
+Analytical Graphics, Inc.
+Beijing Duyou Science and Technology Co.,Ltd.
+Beijing Hitencent Technology Co. Ltd.
+Beijing Huorong Network Technology Co., Ltd.
+Beijing Qihu Technology Co., Ltd.
+Beijing Sogou Technology Development Co., Ltd.
+Docker Inc
+Eclipse.org Foundation, Inc.
+Eclipse Foundation, Inc.
+Flexera Software, Inc.
+Genesys Logic, Inc.
+GENESYS LOGIC, INC.
+Google LLC
+HP Inc.
+HP Inc
+iTrusChina Co.,Ltd.
+Json.NET (.NET Foundation)
+Insecure.Com LLC
+Intel Corporation
+Intel Corporation - Client Components Group
+Intel Corporation-Mobile Wireless Group
+Intel Wireless Driver
+Intel(R) Embedded Subsystems and IP Blocks Group
+Intel(R) Intel Network Drivers
+Intel(R) INTELND1617S2
+Intel(R) INTELND1820
+Intel(R) pGFX
+Intel(R) pGFX 2020
+Intel(R) Software and Firmware Products
+Intel(R) Software Development Products
+Intel(R) Software Products
+Intel(R) Trust Services
+Intel(R) Wireless Connectivity Solutions
+IntelVPGSigning2018
+IntelVPGSigning2020
+LunarG, Inc.
+Microsoft 3rd Party Application Component
+Microsoft Corporation
+Microsoft Developer Platform Side-by-Side Assembly Publisher
+Microsoft Dynamic Code Publisher
+Microsoft Update
+Microsoft Windows
+Microsoft Windows 3rd party Component
+Microsoft Windows Early Launch Anti-malware Publisher
+Microsoft Windows Hardware Abstraction Layer Publisher
+Microsoft Windows Hardware Compatibility Publisher
+Microsoft Windows Kits Publisher
+Microsoft Windows Publisher
+Microsoft Windows Third Party Application Component
+NetSarang Computer, Inc
+OpenJS Foundation
+Oracle America, Inc.
+Postman, Inc.
+Python Software Foundation
+Qihoo 360 Software (Beijing) Company Limited
+Realtek Semiconductor Corp.
+Smart Sound Technology
+SHENZHEN THUNDER NETWORKING TECHNOLOGIES LTD.
+ShenZhen Thunder Networking Technologies Ltd.
+Source Dynamics Inc
+TaoBao(china) Software Co., Ltd
+Tencent Technology(Shenzhen) Company Limited
+The Qt Company Oy
+ThinPrint GmbH
+Tongfang Knowledge Network Technology (Beijing) Co.,Ltd.
+VMware, Inc.
+Wireshark Foundation, Inc.
+Xamarin Inc.
+Zhuhai Kingsoft Office Software Co., Ltd.

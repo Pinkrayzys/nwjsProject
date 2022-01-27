@@ -1,0 +1,159 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 2973535 */
+  src: url('iconfont.woff2?t=1642669249708') format('woff2'),
+       url('iconfont.woff?t=1642669249708') format('woff'),
+       url('iconfont.ttf?t=1642669249708') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.edr-rizhi:before {
+  content: "\e660";
+}
+
+.edr-geliqu:before {
+  content: "\e82d";
+}
+
+.edr-xinrenqu:before {
+  content: "\e82e";
+}
+
+.edr-miner_count:before {
+  content: "\e9fd";
+}
+
+.edr-diannao1:before {
+  content: "\eac0";
+}
+
+.edr-lixian-xian:before {
+  content: "\e7dd";
+}
+
+.edr-zaixian-xian:before {
+  content: "\e7e6";
+}
+
+.edr-upgrade:before {
+  content: "\e718";
+}
+
+.edr-yuancheng:before {
+  content: "\e633";
+}
+
+.edr-malicious_terminal_count:before {
+  content: "\e670";
+}
+
+.edr-operation_count:before {
+  content: "\e7d4";
+}
+
+.edr-today_count:before {
+  content: "\e658";
+}
+
+.edr-ransomware_count:before {
+  content: "\e62d";
+}
+
+.edr-all_count:before {
+  content: "\e6ea";
+}
+
+.edr-apt_count:before {
+  content: "\e643";
+}
+
+.edr-search:before {
+  content: "\e602";
+}
+
+.edr-malware_count:before {
+  content: "\e7a0";
+}
+
+.edr-baimingdan:before {
+  content: "\e626";
+}
+
+.edr-guanbi1:before {
+  content: "\e621";
+}
+
+.edr-windows:before {
+  content: "\e738";
+}
+
+.edr-tuichu:before {
+  content: "\e60d";
+}
+
+.edr-2zuixiaohua-2:before {
+  content: "\e65a";
+}
+
+.edr-guanbi:before {
+  content: "\e64d";
+}
+
+.edr-password:before {
+  content: "\e62a";
+}
+
+.edr-user:before {
+  content: "\e63f";
+}
+
+.edr-shuaxin:before {
+  content: "\e601";
+}
+
+.edr-geli:before {
+  content: "\e6c8";
+}
+
+.edr-shezhi1:before {
+  content: "\e79a";
+}
+
+.edr-hulve:before {
+  content: "\e645";
+}
+
+.edr-task_count:before {
+  content: "\e786";
+}
+
+.edr-set-up-dot:before {
+  content: "\e632";
+}
+
+.edr-geligoujian:before {
+  content: "\e600";
+}
+
+.edr-shezhi:before {
+  content: "\e650";
+}
+
+.edr-zhongduanguanli:before {
+  content: "\e770";
+}
+
+.edr-icon_huabanfuben:before {
+  content: "\e625";
+}
+
+.edr-duixiangfangbingdu:before {
+  content: "\e642";
+}
+

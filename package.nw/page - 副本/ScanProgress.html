@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智戎EDR</title>
+  <link rel="stylesheet" type="text/css" href="../asstes/css/footer.css"/>
+  <link rel="stylesheet" type="text/css" href="../asstes/css/scanProgress.css"/>
+</head>
+<body ondragstart="return false">
+  <div id="Vue" class="scanProgress">
+    <div class="head"></div>
+
+    <div class="goBack"> <i class="el-icon-arrow-left" @click="goBack">返回</i></div>
+
+    <div class="progress">
+      <!-- <img
+        :src="!scanFinal ? '../asstes/img/scanfull.png' : '../asstes/img/scanFinal.png'"> -->
+      <div class="loadingImg"
+        v-if='scanLoading' >
+          <img
+          :style="{
+            display: scanLoading ? 'block': 'none'
+          }"
+          src="../asstes/img/compter.png">
+        <div class="imgSanBox">
+        <img
+          :style="{
+            display: scanLoading ? 'block': 'none'
+          }"
+          class="imgSan"
+          src="../asstes/img/scan.png">
+        </div>
+      </div>
+      <img
+        :style="{
+          display: !scanLoading && !deleteThen > 0 && resData.length > 0 && !scanType? 'block': 'none'
+        }"
+        v-else-if="!scanLoading && !deleteThen && resData.length > 0"
+        src="../asstes/img/scanFinal.png">
+
+        <img
+        :style="{
+          display: !scanLoading && !deleteThen && resData.length === 0 ? 'block': 'none'
+        }"
+        v-else-if="!scanLoading && !deleteThen && resData.length === 0 && !scanType"
+        src="../asstes/img/scanEmpty.png">
+
+      <!-- <img
+        v-else
+        src="../asstes/img/scanfull.png"> -->
+
+      <div
+        class="progress_msg"
+        :style="{
+          display: !scanFinal && !deleteThen && scanType ? 'block': 'none'
+        }"
+        v-show="!scanFinal" v-cloak>
+        <h3>
+          <span
+            :style="{
+              display: !stopSacn && scanType ? 'block': 'none'
+            }"
+            class="title"
+            v-if="!stopSacn">正在{{scanTypeName[scanType]}}检测</span>
+          <span
+            :style="{
+              display: stopSacn ? 'block': 'none'
+            }"
+            class="title"
+            v-else>正在停止检测</span>
+          <div style="
+            display: flex;
+            align-items: center;">
+          <el-button
+            v-if="!stopSacn"
+            size="mini"
+            @click='pauseScan(pause)'
+            class="btnPrimary"
+            > {{pause? '继续' : '暂停'}}</el-button>
+            <span
+              @click='stopScan'
+              style="-webkit-app-region:no-drag;position: relative;top: -2px;">停止</span>
+          </div>
+        </h3>
+        <!-- <div class="progress_box">
+          <div
+            v-cloak
+            :style="{
+              width: progressData + '%'
+            }"
+            class="progress_content">
+          </div>
+          <div
+          class="proNum"
+          v-cloak
+          :style="{
+            'margin-left': progressData + 1 + '%'
+          }"
+          >{{progressData +  '%'}}</div>
+        </div> -->
+        <div class="activeFile" v-cloak>{{activeFile}}</div>
+      </div>
+
+      <div
+        v-cloak
+        v-if="!scanLoading && !deleteThen"
+        :style="{
+          display: scanFinal ? 'flex': 'none'
+        }"
+        class="scanFinal" >
+        <div>
+          <p>共发现威胁<span class="textHightlight" v-cloak :style="{color: resData.length > 0 ? '#F56C6C' : '#3D8977' }">{{resData.length}}</span>个</p>
+          <p>本次扫描文件<span v-cloak>{{sacnTotal}}</span>个</p>
+          <!-- 统计结果中的 各个type的数量 1203 先注释 -->
+          <!-- <p class="textHightlight">
+            <span v-for="(i, j) of tabObj" style="margin: 5px 5px 5px 0;">
+              {{j}}: <span >{{i}}</span> 个
+            </span>
+          </p> -->
+        </div>
+        <el-button
+        v-if="resData.length"
+        type="primary"
+        :disable="resultData.length"
+        @click="beforeClearAll"
+        class="btnPrimary">一键查杀</el-button>
+      </div>
+
+      <!-- <div v-if='deleteThen'
+        class="scanFinal"
+        style="color:#50B19A;"
+        >
+        <p>查杀成功！</p>
+      </div> -->
+    </div>
+
+    <div class="progressTable" v-if="!deleteThen">
+      <el-tabs
+      :style="{
+        display: scanFinal ? 'block' : 'none'
+      }"
+      v-if="scanFinal"
+      v-model="activeTab"
+      @tab-click="handleClick">
+      <el-tab-pane
+        :style="{
+          cursor: scanFinal ? 'pointer' : 'not-allowed'
+        }"
+        v-for="(i, j) of tabData"
+        :label="`${j}(${i})`" :name="j"></el-tab-pane>
+    </el-tabs>
+
+    <!-- 在查杀还没结束的时候 不展示其他的tab 不可切换展示 -->
+      <el-tabs
+        v-else
+        v-model="activeTab"
+        :style="{
+          display: !scanFinal ? 'block' : 'none'
+        }">
+        <el-tab-pane
+          :label="`检测结果(${tableData.length})`" name="检测结果"></el-tab-pane>
+      </el-tabs>
+
+      <el-table
+        :data="tableData"
+        height="300"
+        style="width: 100%">
+        <!-- <el-table-column
+          prop="fileName"
+          label="文件名"
+          width="150">
+        </el-table-column> -->
+        <el-table-column
+          label="文件路径">
+          <template  slot-scope="scope">
+            <span class="showFilePath">{{scope.row.file_path}}</span>
+            <div v-if="scope.row.labelData">
+              <el-tag
+              v-for="(i, j) of scope.row.labelData"
+              :key="j"
+              size="mini">{{i}}</el-tag>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="time"
+          label="检测时间"
+          width="150"
+          >
+        </el-table-column>
+
+        <!-- 定义不了威胁等级 所以先不要1206 -->
+        <!-- <el-table-column
+        prop="malicious"
+        label="威胁等级"
+        width="100"
+        >
+      </el-table-column> -->
+
+        <el-table-column
+          label="操作"
+          width="150"
+          v-if="activeTab === '检测结果' && scanFinal"
+          >
+          <template slot-scope="scope"
+          :style="{
+            display: scanFinal ? 'block': 'none'
+          }">
+            <el-button
+              type="text"
+              @click="handle(0, scope.row)">隔离</el-button>
+              <el-button
+              type="text"
+              @click="handle(1, scope.row)">信任</el-button>
+              <el-button
+              type="text"
+              @click="handle(2, scope.row)">忽略</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <!-- <span>开始远程</span> -->
+    </div>
+    <div
+      v-if="deleteThen"
+      :style="{
+        display: deleteThen ? 'flex': 'none'
+      }"
+      class="deleteThen">
+      <img
+      src="../asstes/img/scanfull.png">
+      <p v-if="deleteThenNum">查杀成功</p>
+      <p v-else>本次检测未发现风险</p>
+      <p>
+        <span>本次扫描文件 {{sacnTotal}}个 </span>
+        <span>本次查杀文件{{deleteThenNum}} 个</span>
+      </p>
+    </div>
+
+    <!-- <div class="footer">
+      <edrfoot
+        paths="setUp.html"
+      />
+    </div> -->
+    <div class="footer">
+      <!-- <span>病毒库版本: {{edition}}<a href="SetUp.html" target="_self" class="textBtn">检查更新</a></span>
+        <span class="textBtn setUpBtn">
+          <a href="SetUp.html" target="_self" class="textBtn">
+          <i class="iconfont edr-set-up-dot" style="font-size: 20px;color:#50B19A"></i>
+          </a>
+      </span> -->
+    </div>
+  </div>
+  <link rel="stylesheet" href="../asstes/iconfont/font_2973535_bplp2fmsc38/iconfont.css">
+  <link rel="stylesheet" href="../components/element-ui/index.css">
+  <script src="../asstes/js/vue.js"></script>
+  <script src="../asstes/js/dayjs.min.js"></script>
+  <script src="../components/header.js"></script>
+  <script src="../components/footer.js"></script>
+  <script src="../asstes/js/node-api-use.js"></script>
+  <script src="../components/element-ui/index.js"></script>
+  <script src="../components/tray/tray.js"></script>
+  <script src="../asstes/js/utils.js"></script>
+  <script>
+    var ajax = require('./asstes/js/axios/newAjax.js')
+    var app = new Vue ({
+    el: "#Vue",
+    data: {
+      systemName: localStorage.systemName || '系统名',
+      edition: localStorage.VirusVs || 'virus-vision-1.0',
+      progressData: 0,
+      scanType: '',
+      scanFinal: false,
+      activeFile: '',
+      resData: [],
+      tableData: [],
+      stopSacn: false,
+      scanLoading: false,
+      sacnTotal: 0,
+      activeTab: '检测结果',
+      activeState: '扫描',
+      scanTypeName: {
+        full: '全盘',
+        paths: '指定',
+        fast: '快速'
+      },
+      deleteThen: false,
+      deleteThenNum: 0,
+      pause: false, // 是否暂停
+      tabDataName: {
+        '检测结果': 'resultData',
+        '隔离列表': 'isolateData',
+        '信任列表': 'whiteData',
+        '忽略列表': 'ignoreData'
+      }
+    },
+    computed: {
+      // 隔离列表
+      isolateData() {
+        let data  = this.resData.filter((item) => {
+          return item.fileType === 'isolate'
+        })
+        // sessionStorage.setItem('handleData', JSON.stringify({
+        //   isolateData: data
+        // }))
+        sessionStorage.isolateData = JSON.stringify(data)
+        return data
+        // return this.resData.filter((item) => {
+        //   return  item.fileType === 'isolate'
+        // })
+      },
+
+      // 信任列表列表
+      whiteData() {
+        let data  = this.resData.filter((item) => {
+          return item.fileType === 'white'
+        })
+        sessionStorage.whiteData = JSON.stringify(data)
+        return data
+        // return this.resData.filter((item) => {
+        //   return  item.fileType === 'white'
+        // })
+      },
+
+      // 忽略列表
+      ignoreData() {
+        let data  = this.resData.filter((item) => {
+          return item.fileType === 'ignore'
+        })
+        sessionStorage.ignoreData = JSON.stringify(data)
+        return data
+        // return this.resData.filter((item) => {
+        //   return item.fileType === 'ignore'
+        // })
+      },
+
+      resultData() {
+        return this.resData.filter((item) => {
+          return item.fileType === ""
+        })
+      },
+
+      tabData () {
+        return {
+          '检测结果': this.resultData.length,
+          '隔离列表': this.isolateData.length,
+          '信任列表': this.whiteData.length,
+          '忽略列表': this.ignoreData.length
+        }
+      }
+    },
+    mounted() {
+      this.scanType = sessionStorage.currentScanType
+      this.pause = sessionStorage.pause ? Boolean(Number(sessionStorage.pause)) : false
+
+      // this.scanLoading = true
+      if (this.scanType) {
+        if (Boolean(Number(sessionStorage.pause))) {
+          getProgress().then(res => {
+            if (res.data.status === '扫描文件') {
+              this.activeFile = res.data.file
+              this.scanLoading = true
+              let arr = res.data.result
+              arr.forEach(item => {
+                let len = item.file_path.split("\\")
+                item.fileName = len[len.length - 1]
+                item.fileType = ''
+                });
+              this.resData = arr.reverse()
+              this.tableData = this.resData
+            }
+          })
+        } else {
+          this.getProgress()
+        }
+      } else {
+        this.getResult()
+      }
+
+
+      // request_switch_list()
+      // 获取扫描类型
+    },
+    methods: {
+
+      beforeClearAll() {
+        this.$confirm('此操作将在您的系统中删除，除本次[隔离/信任/忽略]的文件， 是否继续。', '提示', {
+          confirmButtonText: '确定',
+          modal: false
+        })
+          .then(()=> {
+            this.clearAll()
+          })
+          .catch(err => {
+          })
+      },
+
+      clearAll() {
+        let arr = this.resultData.filter((item) => {
+          return item.fileType === ''
+        })
+        if(arr) {
+          let pathArr = []
+          arr.forEach((i, j) => {
+            pathArr.push(i.file_path)
+          })
+
+          ajax.post('delete',{
+            paths: pathArr.join(',')
+          }).then((res) => {
+            if (Array.isArray(res.data)) {
+              this.deleteThenNum = res.data.length
+              this.deleteThen = true
+
+              // 已经查杀过了 文件处理结束了
+              sessionStorage.deleteThen = 1
+
+              let paths = []
+              res.data.forEach((res) => {
+                paths.push(res.path)
+              })
+              let resdata = JSON.parse(JSON.stringify(this.resData))
+              let undel = resdata.filter(item => {
+                return !paths.includes(item.file_path)
+              })
+              this.transmissionResult(undel, 'yes')
+            } else {
+              sessionStorage.deleteThen = 1
+              this.deleteThenNum = 0
+              this.deleteThen = true
+            }
+            // 通过res.data.path过滤
+
+          })
+        }
+      },
+
+      handleClick(tab, event) {
+        this.activeTab = tab.name
+        let name = this.tabDataName[tab.name]
+        this.tableData = this[name]
+      },
+
+      transmissionResult(val, update_res) {
+        ajax.post('sync_task_detail/', {
+          ip_address: getMAC().ip,
+          username: 'user-1',
+          terminal_id: getMAC().mac, // 郑炜说 1203 terminal_id就是本地的Mac地址
+          file_list: JSON.stringify(val),
+          total: this.sacnTotal,
+          update_res: update_res ? update_res : ''
+        }).then(res => {
+        })
+      },
+
+      getResult() {
+        ajax.get('result').then(res => {
+          this.stopSacn = false
+          sessionStorage.currentScanType = ''
+          this.scanType = ''
+
+          let d = res.data
+          d.forEach(item => {
+
+            let len = item.file_path.split("\\")
+            item.fileName = len[len.length - 1]
+
+            item.fileType = ''
+
+
+            if (item.label){
+              item.labelData = item.label.split(',').map(i => {
+                return i = i.split('_')[1]
+              })
+            }
+
+            if (sessionStorage.isolateData && JSON.parse(sessionStorage.isolateData)) {
+              JSON.parse(sessionStorage.isolateData).forEach((i) => {
+                if(i.md5 === item.md5) {
+                  item.fileType = i.fileType
+                }
+              })
+            }
+            if (sessionStorage.whiteData && JSON.parse(sessionStorage.whiteData)) {
+              JSON.parse(sessionStorage.whiteData).forEach((i) => {
+                if(i.md5 === item.md5) {
+                  item.fileType = i.fileType
+                }
+              })
+            }
+            if ( sessionStorage.ignoreData && JSON.parse(sessionStorage.ignoreData)) {
+              JSON.parse(sessionStorage.ignoreData).forEach((i) => {
+                if(i.md5 === item.md5) {
+                  item.fileType = i.fileType
+                }
+              })
+            }
+          });
+
+          this.resData = d
+
+          this.tableData = this.resultData
+          this.sacnTotal = res.total
+          // 无论查杀结果是否为空 都传输给后端任务结果
+          this.transmissionResult(d)
+
+
+          // 如果查杀结果不为空
+          if (d) {
+            // 无论是否 一键查杀 都需要给后端存储 任务 和 恶意文件
+
+            // 如果是已经查杀处理过的话 就不用再次上传文件了 因为肯定上传过了
+            // SendMalicious(JSON.parse(JSON.stringify(d)))
+            // 如果自动查杀开启
+            if (localStorage.AutomaticCleaning && Boolean(Number(localStorage.AutomaticCleaning))) {
+              // 执行 一键查杀方法
+              this.clearAll()
+            } else {
+              // 如果之前已经展示查杀结果了
+              if (sessionStorage.deleteThen) {
+                this.clearAll()
+              } else {
+                // 如果不 扫描结果
+                this.scanFinal = true
+              }
+            }
+          }
+        })
+          .catch(err => {
+            console.log(err);
+          })
+      },
+
+
+      getProgress() {
+        ajax.get('progress', {
+          time: new Date().getTime()
+        }).then(res => {
+
+
+            // // 返回数据等于扫描结束 表示进程结束
+            // if(res.data === '扫描结束') {
+
+            //   this.scanLoading = false
+            //   this.getResult()
+
+            // } else if(res.data.status === '扫描文件') {
+
+            //   this.scanLoading = true
+            //   if (!this.stopSacn) {
+            //     this.activeFile = res.data.file
+            //     let arr = res.data.result
+            //     arr.forEach(item => {
+            //       let len = item.file_path.split("\\")
+            //       item.fileName = len[len.length - 1]
+            //       item.fileType = ''
+            //         if (item.label){
+            //           item.labelData = item.label.split(',').map(i => {
+            //             return i = i.split('_')[1]
+            //           })
+            //         }
+            //     });
+            //     this.resData = arr.reverse()
+            //     this.tableData = this.resData
+            //   } else {
+            //     this.activeFile = ''
+            //   }
+
+            // setTimeout(() => {
+            //   this.getProgress()
+            // }, 200)
+
+            // } else if (res.data ===  'License已过期，httpserver已退出'){
+            //   this.$confirm('客户端试用已到期, 请购买正版解锁更多功能。', '提示', {
+            //     confirmButtonText: '确定'
+            //   })
+            //   .then(()=> {
+            //     window.location.href = '../index.html'
+            //     sessionStorage.currentScanType = ''
+            //   })
+            //   .catch(err => {
+            //     window.location.href = '../index.html'
+            //     sessionStorage.currentScanType = ''
+            //   })
+            // }
+          // }
+        })
+          .catch(err => {
+            confirm(this, 0)
+          // this.$confirm('客户端试用已到期, 请购买正版解锁更多功能。', '提示', {
+          //     confirmButtonText: '确定'
+          //   })
+          //   .then(()=> {
+          //     window.location.href = '../index.html'
+          //     sessionStorage.currentScanType = ''
+          //   })
+          //   .catch(err => {
+          //     window.location.href = '../index.html'
+          //     sessionStorage.currentScanType = ''
+          //   })
+          })
+      },
+
+      goBack() {
+        tray.remove()
+        sessionStorage.whiteData = []
+        sessionStorage.isolateData = []
+        sessionStorage.ignoreData = []
+        window.history.go(-1)
+      },
+
+      handle(val, i) {
+        switch (val) {
+          case 0:
+            i.fileType = 'isolate'
+
+            ajax.post('isolate',{
+              paths: i.file_path
+            })
+
+            this.tableData = this.resultData
+            break;
+
+          case 1:
+            i.fileType = 'white'
+
+            ajax.post('whitelist',{
+              md5:i.md5,
+              paths: i.file_path
+            })
+            this.tableData = this.resultData
+            break;
+
+          case 2:
+            i.fileType = 'ignore'
+            this.tableData = this.resultData
+            break;
+
+          default:
+            break;
+        }
+      },
+
+      pauseScan(val) {
+        // 如果 pause 为暂停
+        if (val) {
+          ajax.get('continue')
+            .then(res => {
+              console.log(res)
+              this.getProgress()
+            })
+          this.pause = false
+          sessionStorage.pause = 0
+        } else {
+          ajax.get('pause')
+            .then(res => {
+              console.log(res)
+            })
+          this.pause = true
+          sessionStorage.pause = 1
+        }
+      },
+
+      stopScan () {
+        this.$confirm('当前正在进行病毒检测, 确定停止吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          modal: false
+        })
+        .then(() => {
+          this.activeFile = ""
+          this.stopSacn = true
+
+          // 停止了 按了返回 不能再回来了
+          sessionStorage.currentScanType = ''
+          ajax.get('stop')
+          .then(res => {
+            if (this.pause) {
+              this.pause = false
+              sessionStorage.pause = 0
+              this.getProgress()
+            }
+          })
+        })
+        .catch(() => {
+        });
+      },
+
+      miniSizeWindow() {
+        miniSizeWindow()
+      },
+
+      closeWindow() {
+        closeWindow()
+      }
+    }
+  })
+  </script>
+</body>
+</html>

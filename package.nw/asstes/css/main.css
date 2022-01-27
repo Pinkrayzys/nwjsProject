@@ -1,0 +1,319 @@
+html, body {
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  -webkit-user-select:none;
+  -webkit-app-region:drag;
+}
+
+/* 查杀样式 */
+.Main {
+  width: 100%;
+  /* background-image: -webkit-linear-gradient(#081b1d, #042828); */
+  /* height: calc(100% - 30px); */
+  height: 100%;
+  -webkit-app-region:no-drag;
+}
+.scan {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+/* .scanBox {
+  display: flex;
+  justify-content: space-around;
+  align-content: center;
+  position: relative;
+}
+.scan_btn_style {
+  width: 300px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-direction: column;
+  position: relative;
+}
+.scan_btn_style_bg {
+  width: 300px;
+  height: 300px;
+  background: #063636;
+  border-radius: 50%;
+  position: absolute;
+  z-index: 2;
+  top: 0;
+}
+
+.scan_btn_style_bgbcak {
+  width: 300px;
+  height: 300px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  position: absolute;
+  z-index: 0;
+  top: 10px;
+}
+.scan_btn_style  img {
+  width: 60%;
+  z-index: 3;
+}
+.scan_btn_style span {
+  margin-top: 35px;
+  font-size: 24px;
+  color: #fff;
+  font-weight: 700;
+  z-index: 3;
+}
+.connectStyle {
+  position: absolute;
+  bottom: 0;
+  top: 27px;
+  left: 50%;
+  right: 0;
+  transform: translateX(-50%);
+  z-index: 1;
+} */
+
+/* 查杀样式 1209 版 */
+.scanBanner {
+  position: relative;
+  padding: 50px 20px 10px;
+  box-sizing: border-box;
+  flex: 1;
+  width: 100%;
+  background: -webkit-linear-gradient(to bottom, #D0EBE6, #F3F7F7, #D0EBE6); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to bottom, #D0EBE6, #F3F7F7, #D0EBE6); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+.shield img {
+  height: 250px;
+  position: absolute;
+  left: 50%;
+  transform: translateX( -50%);
+  bottom: -53px;
+  z-index: 3;
+}
+
+/* 防护天数 */
+.ProtectionDays {
+  font-size: 14px;
+  color: #606266;
+  position: absolute;
+  bottom: 5px;
+  display: none;
+}
+.ProtectionDays  span {
+  font-size: 20px;
+  color: #3D8977;
+  font-weight: 600;
+}
+
+.systemInfo {
+  position: absolute;
+  bottom: 5px;
+  right: 20px;
+  font-size: 12px;
+  color: #606266;
+}
+.systemInfo  a {
+  color:  #3D8977;
+  cursor: pointer;
+  font-size: 14px;
+  -webkit-app-region:no-drag !important;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  margin: 0 5px;
+}
+.systemInfo  a  span {
+  border-bottom: 1px solid #3D8977;
+}
+.systemInfo span {
+  display: flex;
+  align-items: center;
+}
+.systemInfo i {
+  color: #3d8977;
+  margin-right: 3px;
+}
+.systemInfo div{
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.systemInfo div:last-of-type span  {
+  margin: 8px 10px 0;
+}
+.scanBox {
+  min-height: 266px;
+  width: 100%;
+  padding: 95px 20px 50px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: linear-gradient(to bottom, #D0EBE6, #F3F7F7, #D0EBE6);
+  position: relative;
+  /* background: url(../img/systemInfoBg.png);
+  background-repeat: no-repeat;
+  background-size: cover; */
+}
+.scanBoxBg {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 0;
+  height: 100%;
+}
+.scanItem {
+  z-index: 3;
+  display: none;
+}
+.scanItem img {
+  width: 175px;
+  display: block;
+}
+.scanItem p {
+  text-align: center;
+  margin-top: 5px;
+  color: #079090;
+  font-weight: 600;
+}
+
+/* 文件选择器样式 */
+.Mycomputer {
+  font-size: 14px;
+  box-sizing: border-box;
+  padding-left: 12px;
+  display: none;
+  align-items: center;
+}
+.Mycomputer img {
+  width: 20px;
+  margin-right: 2px;
+}
+.imgSize {
+  width: 18px;
+  margin-right: 2px;
+}
+.imgBox {
+  display: flex;
+  align-items: center;
+}
+/* .dialogVisibleStyle {
+  display: none;
+} */
+.dialogVisibleTitle {
+  display: flex;
+  align-items: center;
+}
+.dialogVisibleTitle img {
+  width: 25px;
+  margin-right: 10px;
+}
+.el-dialog {
+  height: 400px;
+}
+
+.el-dialog__header {
+  /* background:rgb(68, 68, 68) !important; */
+  padding: 10px 10px !important;
+  background: #3d8977 !important;
+  padding: 10px 10px !important;
+  color: #CEECEE;
+}
+.el-dialog__title {
+  color:#CEECEE !important;
+  font-size: 16px !important;
+}
+.el-dialog__headerbtn {
+  top: 11px !important;
+}
+.el-dialog__headerbtn .el-dialog__close {
+  color:#CEECEE !important;
+}
+.el-dialog__footer {
+  text-align: right !important;
+}
+.el-dialog__footer .el-button--primary{
+  background: #3D8977 !important;
+  border-color: #3D8977 !important;
+  color: #FFF;
+}
+.el-button:focus, .el-button:hover {
+  background: #CEECEE !important;
+  border-color: #4AA592 !important;
+  color: #3D8977 !important;
+}
+.el-dialog__footer .el-button--primary:focus, .el-button--primary:hover{
+  background: #3D8977 !important;
+  border-color: #3D8977 !important;
+  color: #FFF !important;
+}
+
+/* 设置内容主题滚动 */
+.el-dialog__body {
+  height: calc(100% - 106px);
+  overflow: auto;
+  box-sizing: border-box;
+}
+.el-dialog__body::-webkit-scrollbar {
+  width: 10px !important;
+  height: 10px !important;
+  background-color:#25403a !important;
+}
+
+.el-dialog__body::-webkit-scrollbar-thumb {
+  width: 10px !important;
+  height: 10px !important;
+  background-color: #4AA592 !important;
+  box-sizing: border-box !important;
+}
+
+
+/* 文件树 */
+.el-tree {
+  font-size: 16px;
+}
+.el-tree .el-checkbox__inner {
+  border-color: #C0C4CC;
+}
+
+.el-tree .el-checkbox__input.is-checked .el-checkbox__inner,
+.el-tree .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+  background-color: #3D8977;
+  border-color: #3D8977;
+}
+/* .activeLine {
+  animation-name: fullItem;
+  animation-duration:3s;
+  background: linear-gradient(to right, transparent, red)
+} */
+.sacning {
+  left: 0;
+  top: 96px;
+  height: 154px;
+  position: absolute;
+  background: linear-gradient(to right, transparent, #88E2D4);
+  animation-name: fullItem;
+  animation-duration:3s;
+  animation-iteration-count:infinite;
+}
+
+@keyframes fullItem {
+  0% {
+    width: 0;
+    opacity: 0.6;
+  }
+  100% {
+    width: 100%;
+    opacity: 0.6;
+  }
+}
+

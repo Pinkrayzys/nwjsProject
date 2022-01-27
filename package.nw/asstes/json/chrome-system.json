@@ -1,0 +1,87 @@
+{
+  "memory": {
+    "availableCapacity": 14880768,
+    "capacity": 8589934592
+  },
+  "cpu": {
+    "archName": "x86_64",
+    "features": [
+      "mmx",
+      "sse",
+      "sse2",
+      "sse3",
+      "ssse3",
+      "sse4_1",
+      "sse4_2",
+      "avx"
+    ],
+    "modelName": "Intel(R) Core(TM) i5-5257U CPU @ 2.70GHz",
+    "numOfProcessors": 4,
+    "processors": [
+      {
+        "usage": {
+          "idle": 43772627,
+          "kernel": 9989903,
+          "total": 68175488,
+          "user": 14412958
+        }
+      },
+      {
+        "usage": {
+          "idle": 60397836,
+          "kernel": 3351267,
+          "total": 68167828,
+          "user": 4418725
+        }
+      },
+      {
+        "usage": {
+          "idle": 45526028,
+          "kernel": 8927976,
+          "total": 68167846,
+          "user": 13713842
+        }
+      },
+      {
+        "usage": {
+          "idle": 60611809,
+          "kernel": 3282242,
+          "total": 68167811,
+          "user": 4273760
+        }
+      }
+    ]
+  },
+  "storage": [
+    {
+      "capacity": 121123069952,
+      "id": "3E89DEEA-8360-4AB7-B61E-69FA146CAD8C",
+      "name": "Preboot",
+      "type": "fixed"
+    },
+    {
+      "capacity": 121123069952,
+      "id": "78554171-4AAB-4497-AC28-D772652A9CAB",
+      "name": "Update",
+      "type": "fixed"
+    },
+    {
+      "capacity": 121123069952,
+      "id": "185E1569-80AC-4656-A46F-1B40E893010B",
+      "name": "Macintosh HD",
+      "type": "fixed"
+    },
+    {
+      "capacity": 121123069952,
+      "id": "6002B2D8-D58E-4DDE-9813-4DF7BE86C4A4",
+      "name": "Macintosh HD - 数据",
+      "type": "fixed"
+    },
+    {
+      "capacity": 121123069952,
+      "id": "83B77B6E-039F-449E-A15A-A3EBD34D3F3B",
+      "name": "VM",
+      "type": "fixed"
+    }
+  ]
+}

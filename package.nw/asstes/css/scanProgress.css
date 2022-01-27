@@ -1,0 +1,275 @@
+p {
+  margin: 0;
+}
+.scanProgress {
+  padding: 60px 20px;
+  box-sizing: border-box;
+  width: 100%;
+  /* background-image: -webkit-linear-gradient(#061111, #0D1C1D); */
+  /* height: calc(100% - 30px); */
+  height: 100%;
+  -webkit-app-region: no-drag;
+}
+.progress {
+  margin: 20px 20px 0;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.progress p {
+  font-size: 14px;
+}
+.progress img {
+  height: 80px;
+  margin-right: 20px;
+}
+.progress h3 {
+  color: #3D8977;;
+  margin: 10px 0;
+  font-size: 24px;
+}
+.progress h3 span{
+  font-size: 14px;
+  cursor: pointer;
+}
+.progress_msg {
+  flex: 1;
+  display: none;
+}
+h3 .title {
+  color: #3D8977;
+  margin: 0 !important;
+  font-size: 24px !important;
+}
+.progress_msg  h3 {
+  color: #3D8977;
+  margin: 0 !important;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.progress_msg span{
+  margin: 0 15px;
+}
+.loadingImg {
+  position: relative;
+}
+.imgSan {
+  width: 50%;
+  height: auto !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin-left: 25%;
+  margin-top: 8px;
+  /* left: 50%; */
+  /* top: 30%; */
+  /* transform: translate(-50%, -50%); */
+  animation: spin2 2s infinite linear;
+  /* transform-origin: 50% 10px; */
+}
+@keyframes spin2 {
+  0% {
+    left: 5px;
+  }
+  20% {
+    top: 3px;
+    left: 3px;
+  }
+  30% {
+    left: 0px;
+    top: 5px;
+  }
+  40% {
+    left: -3px;
+    top: 3px;
+  }
+  50% {
+    left: -5px;
+    top: 0px;
+  }
+  60% {
+    left: -3px;
+    top: -3px;
+  }
+  70% {
+    top: -5px;
+    left: 0px;
+  }
+  80% {
+    left: 3px;
+    top: -3px;
+  }
+  100% {
+    left: 5px;
+  }
+}
+
+.imgSanBox {
+  animation: spin 1s infinite ease;
+  /* transform-origin: 50% 10px; */
+  /* animation-direction: reverse; */
+}
+@keyframes spin {
+  20% {
+    left: 55%;
+    top: 40%;
+  }
+  40% {
+    left: 55%;
+    top: 40%;
+  }
+  60% {
+    left: 40%;
+    top: 40%;
+  }
+  80% {
+    left: 55%;
+    top: 40%;
+  }
+  100% {
+
+  }
+}
+
+.progress_box {
+  width: 100%;
+  height: 24px;
+  border-radius: 15px;
+  position: relative;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 5px;
+  box-sizing: border-box;
+}
+  .progress img  {
+    display: none;
+    -webkit-user-select:none;
+  }
+  .progress_box .proNum {
+  position: absolute;
+  height: 30px;
+  line-height: 30px;
+  top: 0;
+}
+.progress_content {
+  height: 100%;
+  background: #3D8977;
+  border-radius: 15px;
+}
+.activeFile {
+  color: #3D8977;
+  font-size: 12px;
+  padding: 5px 0;
+  width: 780px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1rem;
+  height: 1rem;
+}
+
+.scanFinal {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color:#3D8977;
+  display: none;
+}
+.scanFinal  p:first-of-type {
+  font-size: 28px;
+  letter-spacing: 2px;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+.textHightlight {
+  color: #F56C6C;
+  font-weight: 600;
+}
+/* .scanFinal p span{
+  color: #F56C6C;
+  font-weight: 600;
+} */
+.tabObjStyle {
+  color: #F56C6C;
+  margin: 5px 5px 5px 0;
+}
+
+.progressTable {
+  margin: 20px;
+  -webkit-app-region: no-drag !important;
+}
+
+/* 展示表格 */
+.showFilePath {
+  width: 400px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow:hidden;
+}
+.spanStyle {
+  font-size: 14px;
+  color: #3D8977;
+  cursor: pointer;
+}
+
+.deleteThen {
+  display: none;
+  text-align: center;
+  height: 100%;
+  /* display: flex; */
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+.deleteThen img {
+  width: 220px;
+}
+.deleteThen p {
+  margin-top: 20px;
+}
+.deleteThen p:first-of-type{
+  color:#50B19A;
+  font-size: 28px;
+  letter-spacing: 2px;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+.deleteThen span{
+  margin: 20px 10px;
+  color: #606266;
+  letter-spacing: 2px;
+  font-size: 16px;
+}
+/* 鼠标浮动到当前 行的 时候展示 全路径 */
+.el-table td.el-table__cell:hover /deep/  .showFilePath {
+  white-space: normal !important;
+}
+
+.el-tabs {
+  -webkit-app-region: no-drag !important;
+}
+
+.el-tabs__item {
+  color: #748681 !important;
+}
+.el-tabs__item:hover,
+.el-tabs__item.is-active{
+  color: #50B19A !important;
+}
+.el-tabs__active-bar {
+  background-color: #50B19A !important;
+}
+.el-tabs__nav-wrap::after {
+  /* background: #050B0C !important; */
+  /* height: ; */
+}
+
+.el-tag {
+  background-color: #EAF9F6 !important;
+  border-color: #BAEADF !important;
+  color:  #3D897B !important;
+  margin-top: 3px;
+  margin-right: 5px;
+}

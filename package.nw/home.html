@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>edr</title>
+  <link rel="stylesheet" type="text/css" href="./asstes/css/footer.css" />
+  <style>
+   html, body {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    user-select:none ;
+    -webkit-app-region:drag;
+  }
+  .home {
+    height: 100%;
+    width: 100%;
+    -webkit-app-region: no-drag !important;
+  }
+  .iframe {
+    width: 100%;
+    height:100%;
+    box-sizing: border-box;
+  }
+  iframe {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border: none;
+    overflow: none;
+    vertical-align:top;
+  }
+  .el-dropdown-menu {
+    top: 30px !important;
+    width: 100px;
+    text-align: center;
+    border: none !important;
+  }
+  .popper__arrow {
+    display: none !important;
+  }
+
+  </style>
+</head>
+<body>
+  <div class="home" id="Vue">
+    <div class="head">
+      <h3>
+        <img src="../asstes/img/edr-logo.png"><span>智戎 Endpoint Detection Response v.202112</span>
+      </h3>
+      <div class="btnBox">
+
+        <span @click="openSetUp()">
+          <i class="iconfont edr-set-up-dot" style="font-size:20px;"></i>
+        </span>
+
+        <span @click="miniSizeWindow()">
+          <i class="iconfont edr-2zuixiaohua-2"></i>
+        </span>
+          &nbsp;
+        <span @click="closeWindow()">
+          <i class="iconfont edr-guanbi"></i>
+        </span>
+      </div>
+    </div>
+    <div class="iframe">
+      <iframe src="index.html" frameborder='0' scrolling="no" width="100%" height="100%" class="iframeBox" id="iframe1"></iframe>
+    </div>
+    <div class="footer">
+      <span>戎磐网络 Copyright © 2021 Roarpanda Corporation. All Rights Reserved.</span>
+      <span class="setUpBtn">www.roarpanda.com</span>
+    </div>
+  </div>
+
+  <script src="./asstes/js/vue.js"></script>
+  <link rel="stylesheet" href="./asstes/iconfont/iconfont/iconfont.css">
+  <link rel="stylesheet" href="./components/element-ui/index.css">
+  <script src="./asstes/js/node-api-use.js"></script>
+  <script src="./asstes/js/axios/index.js"></script>
+  <script src="./components/element-ui/index.js"></script>
+  <script src="./components/tray/tray.js"></script>
+  <script>
+     var app = new Vue({
+      el: "#Vue",
+      mouted() {
+      },
+      methods: {
+        openSetUp() {
+          let dom =  document.getElementById("iframe1").contentWindow
+          console.log(dom)
+          dom.openSetUp()
+        },
+
+        miniSizeWindow () {
+          var win = nw.Window.get();
+          win.minimize()
+        },
+
+        closeWindow () {
+          var win = nw.Window.get();
+          win.hide();
+        }
+      }
+     })
+  </script>
+  <!-- <script src="./components/header.js"></script> -->
+  <!-- <script src="./components/footer.js"></script> -->
+</body>
+</html>
